@@ -25,7 +25,7 @@ const App = () => {
   }, []);
 
   return loading ? (
-    <h2>loading...</h2>
+    <h1>loading...</h1>
   ) : (
     <Router>
       <Switch>

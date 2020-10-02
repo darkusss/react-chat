@@ -1,4 +1,5 @@
 import React, { FormEvent, useEffect, useState } from "react";
+import { Wrapper, Messages } from '../components/ChatStyle';
 import { auth, database } from "../services/firebase";
 
 const Chat = () => {
@@ -28,6 +29,7 @@ const Chat = () => {
     event.preventDefault();
     setWriteError(null);
     setContent("");
+
     try {
       await database.ref("chats").push({
         content,
@@ -40,12 +42,12 @@ const Chat = () => {
   };
 
   return (
-    <div>
-      <div>
+    <Wrapper>
+      <Messages>
         {chats.map((chat: any) => (
           <p key={chat.timestamp}>{chat.content}</p>
         ))}
-      </div>
+      </Messages>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -60,7 +62,7 @@ const Chat = () => {
       <div>
         Logged in as <strong>{user?.email}</strong>
       </div>
-    </div>
+    </Wrapper>
   );
 };
 
