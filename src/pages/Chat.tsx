@@ -1,6 +1,12 @@
 import React, { FormEvent, useEffect, useState } from "react";
-import { Wrapper, Messages } from '../components/ChatStyle';
+import {
+  Wrapper,
+  Messages,
+  UserMessage,
+  CurrentUserMessage,
+} from "../components/ChatStyle";
 import { auth, database } from "../services/firebase";
+import { signOut } from "../helpers/auth";
 
 const Chat = () => {
   const [user, setUser] = useState(auth().currentUser);
@@ -27,8 +33,11 @@ const Chat = () => {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
     setWriteError(null);
     setContent("");
+
+    if (!content) return;
 
     try {
       await database.ref("chats").push({
@@ -44,9 +53,15 @@ const Chat = () => {
   return (
     <Wrapper>
       <Messages>
-        {chats.map((chat: any) => (
-          <p key={chat.timestamp}>{chat.content}</p>
-        ))}
+        {chats.map((chat: any) =>
+          chat.uid === user?.uid ? (
+            <CurrentUserMessage key={chat.timestamp}>
+              {chat.content}
+            </CurrentUserMessage>
+          ) : (
+            <UserMessage key={chat.timestamp}>{chat.content}</UserMessage>
+          )
+        )}
       </Messages>
       <form onSubmit={handleSubmit}>
         <input
@@ -61,6 +76,9 @@ const Chat = () => {
       </form>
       <div>
         Logged in as <strong>{user?.email}</strong>
+      </div>
+      <div>
+        <button onClick={signOut}>Leave the chat</button> if you wish
       </div>
     </Wrapper>
   );
